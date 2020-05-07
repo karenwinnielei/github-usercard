@@ -17,6 +17,8 @@
     and append the returned markup to the DOM as a child of .cards
 */
 
+const gitContainer = document.querySelector('.cards')
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -28,7 +30,7 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +51,65 @@ const followersArray = [];
       </div>
     </div>
 */
+function cardMaker(githubAttr){
+  const {imageUrl, name, username, location, githubUrl, followers, following, bio} = githubAttr
+
+  const gitCard = document.createElement('div')
+  const img = document.createElement('img')
+  const cardInfo = document.createElement('div')
+  const h3 = document.createElement('h3')
+  const gitUser = document.createElement('p')
+  const userLocation = document.createElement('p')
+  const gitProfile = document.createElement('p')
+  const gitLink = document.createElement('a')
+  const followerCount = document.createElement('p')
+  const followingCount = document.createElement('p')
+  const userBio = document.createElement('p')
+
+  gitCard.appendChild(img)
+  gitCard.appendChild(cardInfo)
+  cardInfo.appendChild(h3)
+  cardInfo.appendChild(gitUser)
+  cardInfo.appendChild(userLocation)
+  cardInfo.appendChild(gitProfile)
+  gitProfile.appendChild(gitLink)
+  cardInfo.appendChild(followerCount)
+  cardInfo.appendChild(followingCount)
+  cardInfo.appendChild(userBio)
+
+  gitCard.classList.add('card')
+  cardInfo.classList.add('card-info')
+  h3.classList.add('name')
+  gitUser.classList.add('username')
+
+  img.src = imageUrl
+  h3.textContent = `${username}`
+  gitUser.textContent = `${name}`
+  userLocation.textContent = `Location: ${location}`
+  gitLink.textContent = `Profile: ${githubUrl}`
+  followerCount.textContent = `Followers: ${followers}`
+  followingCount.textContent = `Following: ${following}`
+  userBio.textContent = `Bio: ${bio}`
+
+
+
+
+  
+
+  return gitCard
+}
+
+axios.get(`https://api.github.com/users/karenwinnielei`)
+.then(response => {
+  const githubArr = response.data
+  console.log(githubArr)
+  // console.log(githubArr['avatar_url'])
+    const gitCard = cardMaker({imageUrl: githubArr['avatar_url'], name: githubArr['name'], username: githubArr['login'], location: githubArr['location'], githubUrl: githubArr['url'], followers: githubArr['followers'], following: githubArr['following'], bio: githubArr['bio']})
+    gitContainer.appendChild(gitCard)
+})
+.catch(error => {
+  console.log(error)
+})
 
 /*
   List of LS Instructors Github username's:
@@ -58,3 +119,25 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
+
+function getGit(username){
+  axios.get(`https://api.github.com/users/${username}`)
+  .then(response => {
+    const githubObj = response.data
+    console.log(githubObj)
+    // Object.keys(githubObj).forEach(info => {
+      const gitCard = cardMaker({imageUrl: githubObj['avatar_url'], name: githubObj['name'], username: githubObj['login'], location: githubObj['location'], githubUrl: githubObj['url'], followers: githubObj['followers'], following: githubObj['following'], bio: githubObj['bio']})
+      gitContainer.appendChild(gitCard)
+  })
+    // })
+      
+  .catch(error => {
+    console.log(error)
+  })
+}
+
+followersArray.forEach(username =>{
+  getGit(username)
+})
